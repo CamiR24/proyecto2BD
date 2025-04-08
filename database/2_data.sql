@@ -58,12 +58,12 @@ VALUES
   (10,205,'Preferencial Sur', FALSE, 2);
 
 -- Insertar 4 reservas iniciales
-INSERT INTO reservas (fecha_reserva, estado, id_usuario)
+INSERT INTO reservas (fecha_reserva, id_usuario, id_evento)
 VALUES 
-  ('2025-04-01 08:00:00', 1),
-  ('2025-04-01 08:10:00', 2),
-  ('2025-04-01 08:20:00', 3),
-  ('2025-04-01 08:30:00', 4);
+  ('2025-04-01 08:00:00', 1,1),
+  ('2025-04-01 08:10:00', 2,1),
+  ('2025-04-01 08:20:00', 3,1),
+  ('2025-04-01 08:30:00', 4,1);
 
 -- Asignar esos asientos en detalle_reservas
 INSERT INTO detalle_reservas (id_asiento, id_reserva)

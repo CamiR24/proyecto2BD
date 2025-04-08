@@ -25,4 +25,5 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - ./database/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+    - ./database/1_ddl.sql:/docker-entrypoint-initdb.d/1_ddl.sql
+    - ./database/2_data.sql:/docker-entrypoint-initdb.d/2_data.sql

@@ -11,30 +11,21 @@ ISOLATION_LEVELS = {
     'serializable': psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE
 }
 
+
 def reservar(id_usuario, id_asiento, isolation):
     try: 
         conn = db_conection(ISOLATION_LEVELS[isolation])
         cur = conn.cursor()
         conn.autocommit = False
 
-        time.sleep(random.uniform(0.1, 0.4))  # Simular concurrencia
+        time.sleep(random.uniform(0.1, 0.9))  # Simular concurrencia
 
-        # 🔒 Lock explícito sobre la fila del asiento
-        cur.execute("SELECT * FROM asientos WHERE id = %s FOR UPDATE", (id_asiento,))
+        #Lock explícito sobre la fila del asiento
+        try :
+            cur.execute("SELECT * FROM asientos WHERE id = %s FOR UPDATE NOWAIT", (id_asiento,))
 
-        # Verifica si ya fue reservado para ese evento
-        cur.execute("""
-            SELECT 1 
-            FROM detalle_reservas dr
-            JOIN reservas r ON dr.id_reserva = r.id 
-            WHERE dr.id_asiento = %s AND r.id_evento = %s
-            """, (id_asiento, 1))
-        
-        if cur.fetchone():
-            conn.rollback()
-            return f"[{id_usuario}] ❌ Asiento ya reservado"
-        else:
-            # Crear reserva
+            time.sleep(random.uniform(0.4, 0.7))
+
             cur.execute(
                 "INSERT INTO reservas (id_usuario, fecha_reserva, id_evento) VALUES (%s, now(), %s) RETURNING id", 
                 (id_usuario, 1)
@@ -47,15 +38,17 @@ def reservar(id_usuario, id_asiento, isolation):
                 (id_reserva, id_asiento)
             )
 
-            # Marcar como ocupado
-            cur.execute("UPDATE asientos SET estado = TRUE WHERE id = %s", (id_asiento,))
-
             conn.commit()
             return f"[{id_usuario}] ✅ Reserva exitosa para asiento {id_asiento}"
+        
+        except Exception as e:
+            conn.rollback()
+            return f"[{id_usuario}] ❌ Asiento ya reservado"
 
     except Exception as e:
         conn.rollback()
         return f"[{id_usuario}] ❌ Error durante la reserva: {e}"
+    
     finally:
         cur.close()
         conn.close()
@@ -64,10 +57,17 @@ def reservar(id_usuario, id_asiento, isolation):
 def simular_concurrencia(asiento_id, num_usuarios, isolation):
     threads = []
     resultados = []
+    exitos = 0
+    fracasos = 0
 
     def tarea(id_usuario):
+        nonlocal exitos, fracasos
         resultado = reservar(id_usuario, asiento_id, isolation)
         resultados.append(resultado)
+        if "✅" in resultado:
+            exitos += 1
+        else:
+            fracasos += 1
 
     for i in range(num_usuarios):
         t = threading.Thread(target=tarea, args=(i+1,))
@@ -77,5 +77,5 @@ def simular_concurrencia(asiento_id, num_usuarios, isolation):
     for t in threads:
         t.join()
 
-    return resultados
+    return resultados, exitos, fracasos
 

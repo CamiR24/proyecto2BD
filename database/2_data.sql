@@ -44,18 +44,18 @@ VALUES
   (30,'César Bravo', 'cesar30@correo.com', '555-1030');
 
 -- Insertar 10 asientos (4 reservados)
-INSERT INTO asientos (id, numero_asiento, seccion, estado, id_tipo_boleto)
+INSERT INTO asientos (id, numero_asiento, seccion, id_tipo_boleto)
 VALUES 
-  (1,101,'General Norte', TRUE, 1),
-  (2,102,'General Norte', TRUE, 1),
-  (3,103,'General Norte', TRUE, 1),
-  (4,104,'General Norte', FALSE, 1),
-  (5,105,'General Norte', FALSE, 1),
-  (6,201,'Preferencial Sur', TRUE, 2),
-  (7,202,'Preferencial Sur', FALSE, 2),
-  (8,203,'Preferencial Sur', FALSE, 2),
-  (9,204,'Preferencial Sur', FALSE, 2),
-  (10,205,'Preferencial Sur', FALSE, 2);
+  (1,101,'General Norte', 1),
+  (2,102,'General Norte', 1),
+  (3,103,'General Norte', 1),
+  (4,104,'General Norte', 1),
+  (5,105,'General Norte', 1),
+  (6,201,'Preferencial Sur', 2),
+  (7,202,'Preferencial Sur', 2),
+  (8,203,'Preferencial Sur', 2),
+  (9,204,'Preferencial Sur', 2),
+  (10,205,'Preferencial Sur', 2);
 
 -- Insertar 4 reservas iniciales
 INSERT INTO reservas (fecha_reserva, id_usuario, id_evento)

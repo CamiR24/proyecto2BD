@@ -1,6 +1,7 @@
 import streamlit as st
 import psycopg2.extensions
 from simulation import reservar, simular_concurrencia
+from cleaning_registers import cleaning_registers
 from db import db_conection
 import pandas as pd
 import time
@@ -23,10 +24,10 @@ try:
         asiento_id = opciones[seleccion]
 
         st.markdown("### Configuración de Simulación")
-        num_hilos = st.slider("Cantidad de usuarios (hilos)", 1, 30, 5)
+        num_hilos = st.slider("Cantidad de usuarios (hilos)", 1, 30, 10)
         nivel_aislamiento = st.selectbox("Nivel de aislamiento", ["read_committed", "repeatable_read", "serializable"])
 
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
         # Reservar individualmente
         if col1.button("Reservar individualmente"):
@@ -37,12 +38,20 @@ try:
         if col2.button("Simular concurrencia"):
             st.warning("Simulación en proceso, por favor espera...")
             inicio = time.time()
-            resultados = simular_concurrencia(asiento_id, num_hilos, nivel_aislamiento)
+            resultados, exitos, fracasos = simular_concurrencia(asiento_id, num_hilos, nivel_aislamiento)
             fin = time.time()
 
             df_resultados = pd.DataFrame({"Resultado": resultados})
             st.success(f"Simulación terminada en {round(fin - inicio, 2)} segundos")
             st.dataframe(df_resultados)
+            st.info(f"Numero de exitos : {exitos}")
+            st.info(f"Numero de fracasos : {fracasos}")
+
+
+        if col3.button("Borrar registros para una nueva simulacion"):
+            st.warning("Eliminacion en proceso")
+            cleaning_registers ()
+            st.success("Registros eliminados, listo para otra reserva")
 
     else:
         st.warning("⚠️ No hay asientos disponibles en la base de datos.")

@@ -46,3 +46,12 @@ CREATE TABLE detalle_reservas (
     id_asiento int NOT NULL REFERENCES asientos(id),
     id_reserva int NOT NULL REFERENCES reservas(id)
 );
+
+CREATE TABLE detalles_simulacion (
+    id serial PRIMARY KEY,
+    nivel_aislamiento VARCHAR(250),
+    usuarios int NOT NULL,
+    exitos int NOT NULL,
+    fracasos int NOT NULL,
+    tiempo NUMERIC(10,2) NOT NULL
+);

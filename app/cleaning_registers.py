@@ -1,5 +1,4 @@
 from db import db_conection
-from psycopg2 import sql
 
 def cleaning_registers():
     conn = None
@@ -9,9 +8,8 @@ def cleaning_registers():
         cur = conn.cursor()
         cur.execute("DELETE FROM detalle_reservas")
         conn.commit()
-        # Obtenemos la cantidad de filas afectadas
         rowcount = cur.rowcount
-        return f"[✅ Se eliminaron {rowcount} registros de la tabla]"
+        return f"[✅ Se eliminaron {rowcount} registros de la tabla detalle_reservas]"
     except Exception as e:
         if conn:
             conn.rollback()
@@ -21,5 +19,6 @@ def cleaning_registers():
             cur.close()
         if conn:
             conn.close()
+
 
 

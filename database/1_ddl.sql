@@ -35,7 +35,6 @@ CREATE TABLE reservas (
 CREATE TABLE asientos (
     id serial PRIMARY KEY,
     numero_asiento int NOT NULL,
-    seccion varchar(100) NOT NULL,
     id_tipo_boleto int NOT NULL REFERENCES tipo_boletos(id),
     UNIQUE (numero_asiento)  -- solo existe un asiento con ese numero
 );
@@ -44,7 +43,8 @@ CREATE TABLE asientos (
 CREATE TABLE detalle_reservas (
     id serial PRIMARY KEY,
     id_asiento int NOT NULL REFERENCES asientos(id),
-    id_reserva int NOT NULL REFERENCES reservas(id)
+    id_reserva int NOT NULL REFERENCES reservas(id),
+    UNIQUE (id_asiento)
 );
 
 CREATE TABLE detalles_simulacion (

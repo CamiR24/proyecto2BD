@@ -7,7 +7,8 @@ VALUES ('Super Bowl 2025', '2025-04-21 18:30:00', 10);
 INSERT INTO tipo_boletos (nombre, precio, id_evento)
 VALUES 
   ('General', 25.00, 1),
-  ('Preferencial', 60.00, 1);
+  ('Preferencial', 60.00, 1),
+  ('VIP Oeste', 100.00,1);
 
 -- Insertar usuarios
 INSERT INTO usuarios (id, nombre, email, telefono)
@@ -43,19 +44,40 @@ VALUES
   (29,'Bárbara Flores', 'barbara29@correo.com', '555-1029'),
   (30,'César Bravo', 'cesar30@correo.com', '555-1030');
 
--- Insertar 10 asientos (4 reservados)
-INSERT INTO asientos (id, numero_asiento, seccion, id_tipo_boleto)
+-- Insertar 30 asientos 10 de cada tipo de boleto
+INSERT INTO asientos (id, numero_asiento, id_tipo_boleto)
 VALUES 
-  (1,101,'General Norte', 1),
-  (2,102,'General Norte', 1),
-  (3,103,'General Norte', 1),
-  (4,104,'General Norte', 1),
-  (5,105,'General Norte', 1),
-  (6,201,'Preferencial Sur', 2),
-  (7,202,'Preferencial Sur', 2),
-  (8,203,'Preferencial Sur', 2),
-  (9,204,'Preferencial Sur', 2),
-  (10,205,'Preferencial Sur', 2);
+  (1, 101, 1),
+  (2, 102, 1),
+  (3, 103, 1),
+  (4, 104, 1),
+  (5, 105, 1),
+  (6, 106, 1),
+  (7, 107, 1),
+  (8, 108, 1),
+  (9, 109, 1),
+  (10, 110, 1),
+  (11, 201, 2),
+  (12, 202, 2),
+  (13, 203, 2),
+  (14, 204, 2),
+  (15, 205, 2),
+  (16, 206, 2),
+  (17, 207, 2),
+  (18, 208, 2),
+  (19, 209, 2),
+  (20, 210, 2),
+  (21, 301, 3),
+  (22, 302, 3),
+  (23, 303, 3),
+  (24, 304, 3),
+  (25, 305, 3),
+  (26, 306, 3),
+  (27, 307, 3),
+  (28, 308, 3),
+  (29, 309, 3),
+  (30, 310, 3);
+
 
 -- Insertar 4 reservas iniciales
 INSERT INTO reservas (fecha_reserva, id_usuario, id_evento)

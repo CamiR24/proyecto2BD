@@ -18,14 +18,10 @@ def reservar(id_usuario, id_asiento, isolation):
         cur = conn.cursor()
         conn.autocommit = False
 
-        time.sleep(random.uniform(0.1, 0.9))  # Simular concurrencia
+        time.sleep(random.uniform(0.1, 0.5))  # Simular concurrencia
 
         #Lock explícito sobre la fila del asiento
         try :
-            cur.execute("SELECT * FROM asientos WHERE id = %s FOR UPDATE NOWAIT", (id_asiento,))
-
-            time.sleep(random.uniform(0.4, 0.7))
-
             cur.execute(
                 "INSERT INTO reservas (id_usuario, fecha_reserva, id_evento) VALUES (%s, now(), %s) RETURNING id", 
                 (id_usuario, 1)
@@ -39,32 +35,39 @@ def reservar(id_usuario, id_asiento, isolation):
             )
 
             conn.commit()
-            return f"[{id_usuario}] ✅ Reserva exitosa para asiento {id_asiento}"
+            return f"[{id_usuario}] Reserva exitosa para asiento {id_asiento}"
         
         except Exception as e:
             conn.rollback()
-            return f"[{id_usuario}] ❌ Asiento ya reservado"
+            return f"[{id_usuario}] Asiento ya reservado"
 
     except Exception as e:
         conn.rollback()
-        return f"[{id_usuario}] ❌ Error durante la reserva: {e}"
+        return f"[{id_usuario}] Error durante la reserva: {e}"
     
     finally:
         cur.close()
         conn.close()
 
 
-def simular_concurrencia(asiento_id, num_usuarios, isolation):
+def simular_concurrencia(asientos_disponibles, num_usuarios, isolation):
     threads = []
     resultados = []
+    tiempos = []
     exitos = 0
     fracasos = 0
 
+    # un usuario reserva un asiento aleatorio de los disponibles
     def tarea(id_usuario):
         nonlocal exitos, fracasos
-        resultado = reservar(id_usuario, asiento_id, isolation)
+        id_asiento = random.choice(asientos_disponibles)
+        inicio = time.time()
+        resultado = reservar(id_usuario, id_asiento, isolation)
+        fin = time.time()
+        duracion = (fin-inicio) * 1000 
+        tiempos.append(duracion)
         resultados.append(resultado)
-        if "✅" in resultado:
+        if "exitosa" in resultado:
             exitos += 1
         else:
             fracasos += 1
@@ -77,5 +80,7 @@ def simular_concurrencia(asiento_id, num_usuarios, isolation):
     for t in threads:
         t.join()
 
-    return resultados, exitos, fracasos
+    tiempo_promedio = round(sum(tiempos)/len(tiempos),2) if tiempos else 0
+
+    return resultados, exitos, fracasos, tiempo_promedio
 

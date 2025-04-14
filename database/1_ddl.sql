@@ -35,8 +35,6 @@ CREATE TABLE reservas (
 CREATE TABLE asientos (
     id serial PRIMARY KEY,
     numero_asiento int NOT NULL,
-    seccion varchar(100) NOT NULL,
-    estado boolean NOT NULL DEFAULT FALSE,
     id_tipo_boleto int NOT NULL REFERENCES tipo_boletos(id),
     UNIQUE (numero_asiento)  -- solo existe un asiento con ese numero
 );
@@ -46,5 +44,14 @@ CREATE TABLE detalle_reservas (
     id serial PRIMARY KEY,
     id_asiento int NOT NULL REFERENCES asientos(id),
     id_reserva int NOT NULL REFERENCES reservas(id),
-    UNIQUE (id_asiento)  -- Un asiento no puede reservarse dos veces
+    UNIQUE (id_asiento)
+);
+
+CREATE TABLE detalles_simulacion (
+    id serial PRIMARY KEY,
+    nivel_aislamiento VARCHAR(250),
+    usuarios int NOT NULL,
+    exitos int NOT NULL,
+    fracasos int NOT NULL,
+    tiempo NUMERIC(10,2) NOT NULL
 );
